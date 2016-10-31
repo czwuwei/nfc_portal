@@ -8,11 +8,18 @@ import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.nio.charset.Charset;
+import java.io.IOException;
+
+import jp.co.fmap.util.StringUtil;
+
+import static jp.co.fmap.util.CollectionUtil.mkString;
+import static jp.co.fmap.util.StringUtil.hexString;
+import static jp.co.fmap.util.StringUtil.utfString;
 
 public class MainActivity extends Activity {
 
@@ -52,33 +59,38 @@ public class MainActivity extends Activity {
                 for (Parcelable rawMsg : intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)) {
                     NdefMessage msg = (NdefMessage)rawMsg;
                     for (NdefRecord record: msg.getRecords()) {
-                        Log.d(TAG, "type: " + utfString(record.getType()));
-                        Log.d(TAG, "id: " + utfString(record.getId()));
+                        Log.d(TAG, "type: " + hexString(record.getType()));
+                        Log.d(TAG, "id: " + hexString(record.getId()));
                         Log.d(TAG, "payload: " + utfString(record.getPayload()));
                     }
                 }
             } else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
                 Log.d(TAG, "found ACTION_TAG_DISCOVERED");
                 Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-                Log.d(TAG, "id: " + utfString(tag.getId()));
+                Log.d(TAG, "id: " + hexString(tag.getId()));
                 Log.d(TAG, "techList: " + mkString(tag.getTechList()));
+                final NfcF nfc = NfcF.get(tag);
+                Log.d(TAG, "manufacturer: " + hexString(nfc.getManufacturer()));
+                Log.d(TAG, "systemCode: " + hexString(nfc.getSystemCode()));
+                Log.d(TAG, "length: " + nfc.getMaxTransceiveLength());
+                Log.d(TAG, "timeout: " + nfc.getTimeout());
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        try {
+                            nfc.connect();
+                            byte[] cmd = StringUtil.parseToByte("");
+                            nfc.transceive(cmd);
+
+                        } catch (IOException e) {
+                            Log.e(TAG, "nfc connect exception", e);
+                        }
+                        return null;
+                    }
+                }.execute();
             }
         }
     }
 
-    static String utfString(byte[] bytes) {
-        return new String(bytes, Charset.forName("UTF-8"));
-    }
 
-    static String mkString(String[] list) {
-        return mkString(list, ",");
-    }
-    static String mkString(String[] list, String delimit) {
-        StringBuilder buf = new StringBuilder();
-        for (String s : list) {
-            buf.append(s).append(delimit);
-        }
-        buf.deleteCharAt(buf.length() - 1);
-        return buf.toString();
-    }
 }
