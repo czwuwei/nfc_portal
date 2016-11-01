@@ -10,6 +10,10 @@ import java.util.Arrays;
 public class StringUtil {
   static final Character[] HEX_VALS = new Character[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
+  public static String hexString(int intByte) {
+    return hexString(new byte[]{(byte)intByte});
+  }
+
   public static String hexString(byte[] bytes) {
 
     StringBuffer buf = new StringBuffer();
