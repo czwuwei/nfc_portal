@@ -59,30 +59,33 @@
         android:paddingTop="5dp"
         android:text="block index length"/>
 
-    <RadioGroup
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/radioGroup_block_length">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-        <RadioButton
-            android:id="@+id/radioButton_2bytes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2 bytes"
-            android:layout_weight="1"
-            android:checked="true"/>
+        android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/radioButton_3bytes"
+        <RadioGroup
+            android:id="@+id/radioGroup_block_length"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="3 bytes"
-            android:layout_weight="1"/>
-        </LinearLayout>
-    </RadioGroup>
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/radioButton_2bytes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="2 bytes"/>
+
+            <RadioButton
+                android:id="@+id/radioButton_3bytes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="3 bytes"/>
+        </RadioGroup>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -91,32 +94,32 @@
         android:text="block access mode"
         />
 
-    <RadioGroup
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/radioGroup_block_access_mode">
-        <LinearLayout
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioGroup_block_access_mode"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content">
 
             <RadioButton
                 android:id="@+id/radioButton_withoutCache"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Exclude cache"
                 android:layout_weight="1"
-                android:checked="true"/>
+                android:checked="true"
+                android:text="Exclude cache"/>
 
             <RadioButton
                 android:id="@+id/radioButton_withCache"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cache"
-                android:layout_weight="1"/>
-
-        </LinearLayout>
-    </RadioGroup>
+                android:layout_weight="1"
+                android:text="Cache"/>
+        </RadioGroup>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -125,17 +128,18 @@
         android:text="system code index"/>
 
     <SeekBar
+        android:id="@+id/seekBar_system_index"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/seekBar_system_index"
         android:max="15"
         android:progress="0"/>
 
     <Button
-        android:text="Transceive"
+        android:id="@+id/btnTransceive"
+        style="@android:style/Widget.Material.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnTransceive"
-        style="@android:style/Widget.Holo.Light.Button.Borderless"/>
+        android:onClick="onBtnTransceive"
+        android:text="Transceive"/>
 
 </LinearLayout>

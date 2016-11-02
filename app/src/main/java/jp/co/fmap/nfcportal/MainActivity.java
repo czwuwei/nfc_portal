@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
 
   private Tag tag;
   private NfcF nfcF;
-  private NFCCommand nfcCommand = new NFCCommand();
+  private NFCCmdReadWithNoSecurity nfcCmdReadWithNoSecurity = new NFCCmdReadWithNoSecurity();
   private EditText edtCmdType;
   private EditText edtSystemCodes;
   private SeekBar seekBarBlockCount;
@@ -56,7 +57,37 @@ public class MainActivity extends Activity {
     edtCmdType = (EditText) findViewById(R.id.edtCmdType);
     edtSystemCodes = (EditText) findViewById(R.id.edtSystemCodes);
     seekBarBlockCount = (SeekBar) findViewById(R.id.seekBar_blockCount);
+    seekBarBlockCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        Toast.makeText(MainActivity.this, "block count : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+      }
+    });
     seekBarSystemCodeIndex = (SeekBar) findViewById(R.id.seekBar_system_index);
+    seekBarSystemCodeIndex.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        Toast.makeText(MainActivity.this, "system code index : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+      }
+    });
     radioGroupBlockLength = (RadioGroup) findViewById(R.id.radioGroup_block_length);
     radioGroupBlockAccessMode = (RadioGroup) findViewById(R.id.radioGroup_block_access_mode);
     btnTransceive = (Button)findViewById(R.id.btnTransceive);
@@ -103,6 +134,31 @@ public class MainActivity extends Activity {
         Log.d(TAG, "systemCode: " + hexString(nfcF.getSystemCode()));
         Log.d(TAG, "length: " + nfcF.getMaxTransceiveLength());
         Log.d(TAG, "timeout: " + nfcF.getTimeout());
+
+        // request systemCodes
+
+        new AsyncTask<Void, Void, Void>() {
+          @Override
+          protected Void doInBackground(Void... voids) {
+            try {
+              if (!nfcF.isConnected()) {
+                nfcF.connect();
+              }
+              Log.d(TAG, "NFC connected");
+
+              NFCCmdSearchServiceCode requestServiceCode = new NFCCmdSearchServiceCode();
+              requestServiceCode.idm = tag.getId();
+              requestServiceCode.serviceIndex = 1;
+
+              Log.d(TAG, "send data: " + StringUtil.hexString(requestServiceCode.toBytes()));
+              byte[] response = nfcF.transceive(requestServiceCode.toBytes());
+              Log.d(TAG, "receive data: " + StringUtil.hexString(response));
+            } catch (IOException e) {
+              Log.e(TAG, "nfc connect exception", e);
+            }
+            return null;
+          }
+        }.execute();
       }
     }
   }
@@ -127,22 +183,23 @@ public class MainActivity extends Activity {
     return msg;
   }
 
-  public void onBtnTransceive(View v) {
+  public void onBtnTransceive(View view) {
     Log.d(TAG, "on button Transceive");
 
-    nfcCommand.cmdType = this.edtCmdType.getText().toString();
-    nfcCommand.systemCodes = this.edtSystemCodes.getText().toString().split(",");
-    nfcCommand.blockCount = this.seekBarBlockCount.getProgress();
-    nfcCommand.systemOrderIndex = this.seekBarSystemCodeIndex.getProgress();
+    nfcCmdReadWithNoSecurity.cmdType = this.edtCmdType.getText().toString();
+    nfcCmdReadWithNoSecurity.idm = tag.getId();
+    nfcCmdReadWithNoSecurity.systemCodes = this.edtSystemCodes.getText().toString().split(",");
+    nfcCmdReadWithNoSecurity.blockCount = this.seekBarBlockCount.getProgress();
+    nfcCmdReadWithNoSecurity.systemOrderIndex = this.seekBarSystemCodeIndex.getProgress();
     if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_2bytes) {
-      nfcCommand.blockIndexLengthType = NFCCommand.BLOCK_INDEX_LENGTH_2;
+      nfcCmdReadWithNoSecurity.blockIndexLengthType = NFCCmdReadWithNoSecurity.BLOCK_INDEX_LENGTH_2;
     } else if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_3bytes) {
-      nfcCommand.blockIndexLengthType = NFCCommand.BLOCK_INDEX_LENGTH_3;
+      nfcCmdReadWithNoSecurity.blockIndexLengthType = NFCCmdReadWithNoSecurity.BLOCK_INDEX_LENGTH_3;
     }
     if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withoutCache) {
-      nfcCommand.blockAccessMode = NFCCommand.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
+      nfcCmdReadWithNoSecurity.blockAccessMode = NFCCmdReadWithNoSecurity.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
     } else if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withCache) {
-      nfcCommand.blockAccessMode = NFCCommand.BLOCK_ACCESS_MODE_CACHE;
+      nfcCmdReadWithNoSecurity.blockAccessMode = NFCCmdReadWithNoSecurity.BLOCK_ACCESS_MODE_CACHE;
     }
 
     new AsyncTask<Void, Void, Void>() {
@@ -155,14 +212,14 @@ public class MainActivity extends Activity {
           Log.d(TAG, "NFC connected");
 //                            byte[] cmd = makeCmd("06" + hexString(tag.getId()) + "010f090A8000800180028003800480058006800780088009");
 //                            byte[] cmd = readWithoutEncryption(tag.getId(), 10);
-//          NFCCommand cmd = new NFCCommand();
+//          NFCCmdReadWithNoSecurity cmd = new NFCCmdReadWithNoSecurity();
 //          cmd.cmdType = "06";
 //          cmd.idm = StringUtil.hexString(tag.getId());
 //          cmd.systemCodes = new String[]{"0f09"};
 //          cmd.blockCount = 12;
 
-          Log.d(TAG, "send data: " + StringUtil.hexString(nfcCommand.toBytes()));
-          byte[] response = nfcF.transceive(nfcCommand.toBytes());
+          Log.d(TAG, "send data: " + StringUtil.hexString(nfcCmdReadWithNoSecurity.toBytes()));
+          byte[] response = nfcF.transceive(nfcCmdReadWithNoSecurity.toBytes());
           Log.d(TAG, "receive data: " + StringUtil.hexString(response));
         } catch (IOException e) {
           Log.e(TAG, "nfc connect exception", e);

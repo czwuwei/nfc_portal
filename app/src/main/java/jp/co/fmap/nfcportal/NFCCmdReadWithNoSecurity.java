@@ -6,10 +6,10 @@ import jp.co.fmap.util.StringUtil;
  * Created by z00066 on 2016/11/01.
  */
 
-public class NFCCommand {
-  public int length;
+public class NFCCmdReadWithNoSecurity {
+  private int length;
   public String cmdType;
-  public String idm;
+  public byte[] idm;
   public String[] systemCodes;
   public int blockCount;
   public byte blockIndexLengthType = BLOCK_INDEX_LENGTH_2;
@@ -24,7 +24,7 @@ public class NFCCommand {
   public byte[] toBytes() {
     StringBuffer cmdBuf = new StringBuffer();
     cmdBuf.append(cmdType);
-    cmdBuf.append(idm);
+    cmdBuf.append(StringUtil.hexString(idm));
     cmdBuf.append(StringUtil.hexString(systemCodes.length));
     for (String systemCode:systemCodes) {
       cmdBuf.append(systemCode);
