@@ -22,6 +22,8 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import jp.co.fmap.nfc.f.ReadWithoutEncryption;
+import jp.co.fmap.trush.NFCCmdReadWithNoSecurity;
 import jp.co.fmap.util.StringUtil;
 
 import static jp.co.fmap.util.CollectionUtil.mkString;
@@ -97,7 +99,7 @@ public class MainActivity extends Activity {
   @Override
   protected void onResume() {
     super.onResume();
-//        String[][] techListsArray = new String[][]{new String[]{NfcF.class.getName()}};
+//        String[][] techListsArray = new String[][]{new String[]{NfcFCommand.class.getName()}};
     mAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
   }
 
@@ -137,28 +139,35 @@ public class MainActivity extends Activity {
 
         // request systemCodes
 
-        new AsyncTask<Void, Void, Void>() {
-          @Override
-          protected Void doInBackground(Void... voids) {
-            try {
-              if (!nfcF.isConnected()) {
-                nfcF.connect();
-              }
-              Log.d(TAG, "NFC connected");
+        ReadWithoutEncryption.Request cmd = new ReadWithoutEncryption().new Request();
+        cmd.idm = tag.getId();
+        cmd.serviceCodeList = new byte[]{0x09, 0x0f};
+        cmd.numberOfBlock = 12;
+        cmd.transceive(tag);
 
-              NFCCmdSearchServiceCode requestServiceCode = new NFCCmdSearchServiceCode();
-              requestServiceCode.idm = tag.getId();
-              requestServiceCode.serviceIndex = 1;
 
-              Log.d(TAG, "send data: " + StringUtil.hexString(requestServiceCode.toBytes()));
-              byte[] response = nfcF.transceive(requestServiceCode.toBytes());
-              Log.d(TAG, "receive data: " + StringUtil.hexString(response));
-            } catch (IOException e) {
-              Log.e(TAG, "nfc connect exception", e);
-            }
-            return null;
-          }
-        }.execute();
+//        new AsyncTask<Void, Void, Void>() {
+//          @Override
+//          protected Void doInBackground(Void... voids) {
+//            try {
+//              if (!nfcF.isConnected()) {
+//                nfcF.connect();
+//              }
+//              Log.d(TAG, "NFC connected");
+//
+//              NFCCmdSearchServiceCode requestServiceCode = new NFCCmdSearchServiceCode();
+//              requestServiceCode.idm = tag.getId();
+//              requestServiceCode.serviceIndex = 1;
+//
+//              Log.d(TAG, "send data: " + StringUtil.hexString(requestServiceCode.toBytes()));
+//              byte[] response = nfcF.transceive(requestServiceCode.toBytes());
+//              Log.d(TAG, "receive data: " + StringUtil.hexString(response));
+//            } catch (IOException e) {
+//              Log.e(TAG, "nfc connect exception", e);
+//            }
+//            return null;
+//          }
+//        }.execute();
       }
     }
   }
@@ -216,7 +225,7 @@ public class MainActivity extends Activity {
 //          cmd.cmdType = "06";
 //          cmd.idm = StringUtil.hexString(tag.getId());
 //          cmd.systemCodes = new String[]{"0f09"};
-//          cmd.blockCount = 12;
+//          cmd.numberOfBlock = 12;
 
           Log.d(TAG, "send data: " + StringUtil.hexString(nfcCmdReadWithNoSecurity.toBytes()));
           byte[] response = nfcF.transceive(nfcCmdReadWithNoSecurity.toBytes());

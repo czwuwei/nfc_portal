@@ -2,11 +2,11 @@ package jp.co.fmap.util;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by z00066 on 2016/10/31.
  */
-
-import static org.junit.Assert.*;
 
 public class StringUtilTest {
 
@@ -24,5 +24,18 @@ public class StringUtilTest {
     String bytesStr = CollectionUtil.mkString(bytes);
     System.out.print(bytesStr);
     assertTrue("10,16,100,127".equals(bytesStr));
+  }
+
+  @Test
+  public void indexTest() throws Exception {
+    byte[] bytes = new byte[]{'0', 'A', '1', 'B', '2', 'C', '3', 'D'};
+    int cursor = 0;
+    byte a = bytes[cursor += 1];
+    System.out.println(a);
+    assertTrue(a == 'A');
+
+    byte b = bytes[cursor += 2];
+    System.out.println(b);
+    assertTrue(b == 'B');
   }
 }

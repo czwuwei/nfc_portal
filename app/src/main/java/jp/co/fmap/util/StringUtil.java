@@ -15,6 +15,7 @@ public class StringUtil {
   }
 
   public static String hexString(byte[] bytes) {
+    if (bytes == null) return null;
 
     StringBuffer buf = new StringBuffer();
     for(int i = 0; i < bytes.length; i++) {
@@ -31,6 +32,8 @@ public class StringUtil {
   }
 
   public static byte[] parseToByte(String hexString) {
+
+    if (hexString == null) return null;
 
     char[] chars = hexString.toLowerCase().toCharArray();
     int len = chars.length;

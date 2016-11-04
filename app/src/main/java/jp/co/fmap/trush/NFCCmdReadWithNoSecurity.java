@@ -1,4 +1,4 @@
-package jp.co.fmap.nfcportal;
+package jp.co.fmap.trush;
 
 import jp.co.fmap.util.StringUtil;
 
