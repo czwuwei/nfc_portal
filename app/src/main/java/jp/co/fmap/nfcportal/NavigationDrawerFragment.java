@@ -1,16 +1,17 @@
 package jp.co.fmap.nfcportal;
 
 
-import android.app.Activity;
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,7 @@ public class NavigationDrawerFragment extends Fragment {
    * expands it. This shared preference tracks this.
    */
   private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
+  private final String[] itemList = new String[]{getString(R.string.title_section1), getString(R.string.title_section2), getString(R.string.title_section3),};
 
   /**
    * A pointer to the current callbacks instance (the Activity).
@@ -95,7 +97,7 @@ public class NavigationDrawerFragment extends Fragment {
         selectItem(position);
       }
     });
-    mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, new String[]{getString(R.string.title_section1), getString(R.string.title_section2), getString(R.string.title_section3),}));
+    mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, itemList));
     mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
     return mDrawerListView;
   }
@@ -124,9 +126,12 @@ public class NavigationDrawerFragment extends Fragment {
 
     // ActionBarDrawerToggle ties together the the proper interactions
     // between the navigation drawer and the action bar app icon.
+    Toolbar v7toolbar = new Toolbar(getActivity());
+    v7toolbar.setNavigationIcon(R.drawable.ic_drawer);
+
     mDrawerToggle = new ActionBarDrawerToggle(getActivity(),                    /* host Activity */
         mDrawerLayout,                    /* DrawerLayout object */
-        R.drawable.ic_drawer,             /* nav drawer image to replace 'Up' caret */
+        v7toolbar,             /* nav drawer image to replace 'Up' caret */
         R.string.navigation_drawer_open,  /* "open drawer" description for accessibility */
         R.string.navigation_drawer_close  /* "close drawer" description for accessibility */) {
       @Override
