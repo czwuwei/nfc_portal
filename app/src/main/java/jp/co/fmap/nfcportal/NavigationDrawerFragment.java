@@ -2,15 +2,15 @@ package jp.co.fmap.nfcportal;
 
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -40,7 +40,7 @@ public class NavigationDrawerFragment extends Fragment {
    * expands it. This shared preference tracks this.
    */
   private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
-  private final String[] itemList = new String[]{getString(R.string.title_section1), getString(R.string.title_section2), getString(R.string.title_section3),};
+  private String[] itemList;
 
   /**
    * A pointer to the current callbacks instance (the Activity).
@@ -97,6 +97,7 @@ public class NavigationDrawerFragment extends Fragment {
         selectItem(position);
       }
     });
+    itemList = new String[]{getString(R.string.title_section1), getString(R.string.title_section2), getString(R.string.title_section3),};
     mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, itemList));
     mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
     return mDrawerListView;
@@ -177,7 +178,7 @@ public class NavigationDrawerFragment extends Fragment {
       }
     });
 
-    mDrawerLayout.setDrawerListener(mDrawerToggle);
+    mDrawerLayout.addDrawerListener(mDrawerToggle);
   }
 
   private void selectItem(int position) {
@@ -194,7 +195,7 @@ public class NavigationDrawerFragment extends Fragment {
   }
 
   @Override
-  public void onAttach(Activity activity) {
+  public void onAttach(Context activity) {
     super.onAttach(activity);
     try {
       mCallbacks = (NavigationDrawerCallbacks) activity;
@@ -254,7 +255,6 @@ public class NavigationDrawerFragment extends Fragment {
   private void showGlobalContextActionBar() {
     ActionBar actionBar = getActionBar();
     actionBar.setDisplayShowTitleEnabled(true);
-    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
     actionBar.setTitle(R.string.app_name);
   }
 
