@@ -27,7 +27,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
     public int numberOfBlock;
     public byte blockIndexLengthType = BLOCK_INDEX_LENGTH_2;
     public byte blockAccessMode = BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
-    public int systemOrderIndex = 0;
+    public int serviceOrderIndex = 0;
 
     @Override
     NfcFCommand.Response getResponse() {
@@ -54,7 +54,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
         byteStream.write(numberOfBlock);
 
         for (int i = 0; i < numberOfBlock; i ++) {
-          byteStream.write(blockIndexLengthType << 7 | blockAccessMode << 4 | systemOrderIndex);
+          byteStream.write(blockIndexLengthType << 7 | blockAccessMode << 4 | serviceOrderIndex);
           byteStream.write((byte)i);
         }
 

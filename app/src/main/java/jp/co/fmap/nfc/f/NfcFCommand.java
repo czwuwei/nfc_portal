@@ -56,6 +56,7 @@ public abstract class NfcFCommand {
 
         if (responseData != null && responseData[1] == responseCode) {
           response = getResponse();
+          response.rowData = responseData;
           response.length = responseData[0];
           Log.i(LOG_TAG, "NFC-F receive response: " + StringUtil.hexString(responseData));
           response.parseResponseData(responseData);
@@ -72,7 +73,13 @@ public abstract class NfcFCommand {
 
   abstract public class Response {
     protected int length;
+    protected byte[] rowData;
     abstract public void parseResponseData(byte[] responseData);
+
+    @Override
+    public String toString() {
+      return "cmd [" + NfcFCommand.this.cmdCode + "] =\n\t\t" + StringUtil.hexString(this.rowData);
+    }
   }
 }
 

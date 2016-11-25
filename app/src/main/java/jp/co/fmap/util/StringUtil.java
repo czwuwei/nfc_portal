@@ -2,6 +2,7 @@ package jp.co.fmap.util;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.Locale;
 
 /**
  * Created by z00066 on 2016/10/31.
@@ -35,9 +36,8 @@ public class StringUtil {
 
     if (hexString == null) return null;
 
-    char[] chars = hexString.toLowerCase().toCharArray();
+    char[] chars = hexString.toLowerCase(Locale.getDefault()).toCharArray();
     int len = chars.length;
-    assert(len % 2 == 0);
     byte[] bytes = new byte[chars.length/2];
     for (int i =0; i < chars.length; i = i + 2) {
       char hightHex = chars[i];

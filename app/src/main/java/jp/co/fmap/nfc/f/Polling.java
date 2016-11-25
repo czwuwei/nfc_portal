@@ -7,6 +7,10 @@ import java.util.Arrays;
  */
 
 public class Polling extends NfcFCommand {
+
+  public static final String[] ENUM_REQUEST_CODE = { "00", "01", "02" };
+  public static final String[] ENUM_TIME_SLOT = { "00", "01", "03", "07", "0F" };
+
   public Polling() {
     super((byte) 0x00, (byte) 0x01);
   }

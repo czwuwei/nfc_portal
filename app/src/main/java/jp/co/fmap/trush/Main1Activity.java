@@ -1,4 +1,4 @@
-package jp.co.fmap.nfcportal;
+package jp.co.fmap.trush;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,14 +23,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import jp.co.fmap.nfc.f.ReadWithoutEncryption;
-import jp.co.fmap.trush.NFCCmdReadWithNoSecurity;
+import jp.co.fmap.nfcportal.R;
 import jp.co.fmap.util.StringUtil;
 
 import static jp.co.fmap.util.CollectionUtil.mkString;
 import static jp.co.fmap.util.StringUtil.hexString;
 import static jp.co.fmap.util.StringUtil.utfString;
 
-public class Main1Activity extends Activity {
+public abstract class Main1Activity extends Activity {
 
   public static String TAG = "WNFC";
   private PendingIntent pendingIntent;

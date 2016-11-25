@@ -10,30 +10,16 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="jp.co.fmap.nfcportal.jp.co.fmap.trush.Main1Activity">
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Command Type"
-        />
-
-    <EditText
-        android:id="@+id/edtCmdType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Command Type"
-        android:text="06"/>
+    tools:context="jp.co.fmap.nfcportal.FragmentReadWithoutEncryption">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:text="System codes"/>
+        android:text="Service codes"/>
 
     <EditText
-        android:id="@+id/edtSystemCodes"
+        android:id="@+id/edtServiceCodes"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -58,7 +44,6 @@
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
         android:text="block index length"/>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -125,10 +110,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
-        android:text="system code index"/>
+        android:text="service code order"/>
 
     <SeekBar
-        android:id="@+id/seekBar_system_index"
+        android:id="@+id/seekBar_service_code_order"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="15"
