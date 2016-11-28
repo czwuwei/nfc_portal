@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="seperated by ','"
-        android:text="0f09"/>
+        android:text="090f"/>
 
     <TextView
         android:layout_width="match_parent"

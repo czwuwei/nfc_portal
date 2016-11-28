@@ -1,6 +1,8 @@
 package jp.co.fmap.nfcportal;
 
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,6 @@ import android.widget.Toast;
 
 import jp.co.fmap.nfc.f.NfcFCommand;
 import jp.co.fmap.nfc.f.ReadWithoutEncryption;
-import jp.co.fmap.trush.NFCCmdReadWithNoSecurity;
 import jp.co.fmap.util.StringUtil;
 
 /**
@@ -29,6 +30,7 @@ public class FragmentReadWithoutEncryption extends MainActivity.PlaceholderFragm
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    Log.d(MainActivity.TAG, "FragmentReadWithoutEncryption onCreateView");
     View rootView = inflater.inflate(R.layout.frm_read_without_encryption, container, false);
 
     edtServiceCodeList = (EditText) rootView.findViewById(R.id.edtServiceCodes);
@@ -72,7 +74,7 @@ public class FragmentReadWithoutEncryption extends MainActivity.PlaceholderFragm
 
 
   @Override
-  protected NfcFCommand.Request genNfcCommand() {
+  protected NfcFCommand.Request genNfcCommand(Tag tag) {
     ReadWithoutEncryption.Request request = new ReadWithoutEncryption().new Request();
 
     request.serviceCodeList = StringUtil.parseToByte(edtServiceCodeList.getText().toString().replace(",", ""));
@@ -89,6 +91,8 @@ public class FragmentReadWithoutEncryption extends MainActivity.PlaceholderFragm
     } else if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withCache) {
       request.blockAccessMode = NFCCmdReadWithNoSecurity.BLOCK_ACCESS_MODE_CACHE;
     }
+
+    request.idm = tag.getId();
 
     return request;
   }

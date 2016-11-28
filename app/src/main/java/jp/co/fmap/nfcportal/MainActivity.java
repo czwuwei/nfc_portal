@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import jp.co.fmap.nfc.f.NfcFCommand;
 
@@ -42,8 +43,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
   private NfcAdapter mAdapter;
   private Tag tag;
   private NfcF nfcF;
-
-  private PlaceholderFragment fragment = null;
+  private PlaceholderFragment fragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +100,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
       Log.d(TAG, "systemCode: " + hexString(nfcF.getSystemCode()));
       Log.d(TAG, "length: " + nfcF.getMaxTransceiveLength());
       Log.d(TAG, "timeout: " + nfcF.getTimeout());
+      Toast.makeText(this, "NFC enabled!", Toast.LENGTH_SHORT).show();
     }
   }
 
@@ -116,7 +117,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         fragment = new FragmentReadWithoutEncryption();
         break;
       default:
-        fragment = PlaceholderFragment.newInstance(position + 1);
+        fragment = new PlaceholderFragment();
     }
 
     Bundle args = new Bundle();
@@ -154,7 +155,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
       @Override
       protected Void doInBackground(Void... voids) {
 
-        NfcFCommand.Request req = fragment.genNfcCommand();
+        NfcFCommand.Request req = fragment.genNfcCommand(tag);
         if (tag != null) {
           NfcFCommand.Response response = req.transceive(tag);
           Log.d(MainActivity.TAG, response.toString());
@@ -174,21 +175,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    public PlaceholderFragment() {
-    }
-
-    /**
-     * Returns a new instance of this fragment for the given section
-     * number.
-     */
-    public static PlaceholderFragment newInstance(int sectionNumber) {
-      PlaceholderFragment fragment = new PlaceholderFragment();
-//      Bundle args = new Bundle();
-//      args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-//      fragment.setArguments(args);
-      return fragment;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
       View rootView = inflater.inflate(R.layout.fragment_main2, container, false);
@@ -201,7 +187,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
       ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
     }
 
-    protected NfcFCommand.Request genNfcCommand() {
+    protected NfcFCommand.Request genNfcCommand(Tag tag) {
       return null;
     }
   }

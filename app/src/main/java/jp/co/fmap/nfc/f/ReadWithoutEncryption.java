@@ -69,6 +69,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
   public class Response extends NfcFCommand.Response {
 
     public byte[] idm;
+    public byte responseCode;
     public byte status1 = (byte)0xff;
     public byte status2 = (byte)0xff;
     public int numberOfBlock;
@@ -76,14 +77,15 @@ public class ReadWithoutEncryption extends NfcFCommand {
 
     @Override
     public void parseResponseData(byte[] responseData) {
-      int cursor = 2;
+      int cursor = 1;
+      responseCode = responseData[cursor += 1];
       idm = Arrays.copyOfRange(responseData, cursor, cursor += 8);
       status1 = responseData[cursor += 1];
       status2 = responseData[cursor += 1];
 
       if (status1 == 0x00) {
         numberOfBlock = responseData[cursor += 1];
-        blockData = Arrays.copyOfRange(responseData, cursor, responseData.length);
+        blockData = Arrays.copyOfRange(responseData, cursor, responseData.length - 1);
       }
     }
   }

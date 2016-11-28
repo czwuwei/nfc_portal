@@ -1,6 +1,8 @@
 package jp.co.fmap.nfcportal;
 
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ public class FragmentPolling extends MainActivity.PlaceholderFragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    Log.d(MainActivity.TAG, "FragmentPolling onCreateView");
     View rootView = inflater.inflate(R.layout.frm_polling, container, false);
 
     edtSystemCodeMask = (EditText) rootView.findViewById(R.id.edtSystemMask);
@@ -44,7 +47,7 @@ public class FragmentPolling extends MainActivity.PlaceholderFragment {
 
 
   @Override
-  protected NfcFCommand.Request genNfcCommand() {
+  protected NfcFCommand.Request genNfcCommand(Tag tag) {
     Polling.Request polling = new Polling().new Request();
     polling.systemCodeMask = StringUtil.parseToByte(edtSystemCodeMask.getText().toString());
     polling.requestCode = StringUtil.parseToByte(Polling.ENUM_REQUEST_CODE[spRequestCode.getSelectedItemPosition()])[0];
