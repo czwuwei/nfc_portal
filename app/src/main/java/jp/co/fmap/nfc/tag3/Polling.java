@@ -1,4 +1,4 @@
-package jp.co.fmap.nfc.f;
+package jp.co.fmap.nfc.tag3;
 
 import java.util.Arrays;
 
@@ -21,9 +21,10 @@ public class Polling extends NfcFCommand {
     public byte requestCode;
     public byte timeSlot;
 
+
     @Override
-    NfcFCommand.Response getResponse() {
-      return new Response();
+    NfcFCommand.Response parseResponse(byte[] rawData) {
+      return new Response(rawData);
     }
 
     @Override
@@ -41,14 +42,18 @@ public class Polling extends NfcFCommand {
   public class Response extends NfcFCommand.Response {
     public byte[] idm;
     public byte[] pmm;
-    public byte[] requestData;
+    public byte[] requestedData;
+
+    private Response(byte[] responseData) {
+      super(responseData);
+    }
 
     @Override
-    public void parseResponseData(byte[] responseData) {
+    protected void parseResponse() {
       int cursor = 1;
-      idm = Arrays.copyOfRange(responseData, cursor, cursor += 8);
-      pmm = Arrays.copyOfRange(responseData, cursor, cursor += 8);
-      requestData = Arrays.copyOfRange(responseData, cursor, responseData.length);
+      idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+      pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+      requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
     }
   }
 }

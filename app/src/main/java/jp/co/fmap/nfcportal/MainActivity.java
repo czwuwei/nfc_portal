@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import jp.co.fmap.nfc.f.NfcFCommand;
+import jp.co.fmap.nfc.tag3.NfcFCommand;
 
 import static jp.co.fmap.util.CollectionUtil.mkString;
 import static jp.co.fmap.util.StringUtil.hexString;

@@ -10,8 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import jp.co.fmap.nfc.f.NfcFCommand;
-import jp.co.fmap.nfc.f.Polling;
+import jp.co.fmap.nfc.tag3.NfcFCommand;
+import jp.co.fmap.nfc.tag3.Polling;
 import jp.co.fmap.util.StringUtil;
 
 /**

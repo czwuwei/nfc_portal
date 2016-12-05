@@ -1,4 +1,4 @@
-package jp.co.fmap.nfc.f;
+package jp.co.fmap.nfc.tag3;
 
 /**
  * Created by z00066 on 2016/11/28.

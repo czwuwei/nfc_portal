@@ -1,4 +1,4 @@
-package jp.co.fmap.nfc.f;
+package jp.co.fmap.nfc.tag3;
 
 import android.util.Log;
 
@@ -30,8 +30,8 @@ public class ReadWithoutEncryption extends NfcFCommand {
     public int serviceOrderIndex = 0;
 
     @Override
-    NfcFCommand.Response getResponse() {
-      return new Response();
+    NfcFCommand.Response parseResponse(byte[] rawData) {
+      return new Response(rawData);
     }
 
     @Override
@@ -75,18 +75,23 @@ public class ReadWithoutEncryption extends NfcFCommand {
     public int numberOfBlock;
     public byte[] blockData;
 
+    private Response(byte[] rawData) {
+      super(rawData);
+    }
+
     @Override
-    public void parseResponseData(byte[] responseData) {
+    protected void parseResponse() {
       int cursor = 1;
-      responseCode = responseData[cursor += 1];
-      idm = Arrays.copyOfRange(responseData, cursor, cursor += 8);
-      status1 = responseData[cursor += 1];
-      status2 = responseData[cursor += 1];
+      responseCode = rawData[cursor += 1];
+      idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+      status1 = rawData[cursor += 1];
+      status2 = rawData[cursor += 1];
 
       if (status1 == 0x00) {
-        numberOfBlock = responseData[cursor += 1];
-        blockData = Arrays.copyOfRange(responseData, cursor, responseData.length - 1);
+        numberOfBlock = rawData[cursor += 1];
+        blockData = Arrays.copyOfRange(rawData, cursor, rawData.length - 1);
       }
     }
+
   }
 }

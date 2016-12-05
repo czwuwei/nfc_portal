@@ -1,4 +1,4 @@
-package jp.co.fmap.nfc.f;
+package jp.co.fmap.nfc.tag3;
 
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
@@ -33,12 +33,11 @@ public abstract class NfcFCommand {
   }
 
   abstract public class Request<T extends Response> {
-    abstract T getResponse();
+    abstract T parseResponse(byte[] rawData);
     abstract byte[] makeCmd();
 
-    T response;
-
     public T transceive(Tag tag) {
+      T response = null;
       NfcF nfcf = NfcF.get(tag);
       try {
         nfcf.connect();
@@ -55,11 +54,8 @@ public abstract class NfcFCommand {
         byte[] responseData = nfcf.transceive(cmd);
 
         if (responseData != null && responseData[1] == responseCode) {
-          response = getResponse();
-          response.rowData = responseData;
-          response.length = responseData[0];
           Log.i(LOG_TAG, "NFC-F receive response: " + StringUtil.hexString(responseData));
-          response.parseResponseData(responseData);
+          response = parseResponse(responseData);
         } else {
           Log.w(LOG_TAG, "illegal response : " + StringUtil.hexString(responseData));
         }
@@ -73,12 +69,20 @@ public abstract class NfcFCommand {
 
   abstract public class Response {
     protected int length;
-    protected byte[] rowData;
-    abstract public void parseResponseData(byte[] responseData);
+    protected byte[] rawData;
+
+
+    protected Response(byte[] rawData) {
+      this.length = rawData[0];
+      this.rawData = rawData;
+      this.parseResponse();
+    }
+
+    abstract protected void parseResponse();
 
     @Override
     public String toString() {
-      return "cmd [" + NfcFCommand.this.cmdCode + "] =\n\t\t" + StringUtil.hexString(this.rowData);
+      return "cmd [" + NfcFCommand.this.cmdCode + "] =\n\t\t" + StringUtil.hexString(this.rawData);
     }
   }
 }

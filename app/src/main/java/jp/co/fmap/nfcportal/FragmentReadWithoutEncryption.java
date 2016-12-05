@@ -11,8 +11,8 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import jp.co.fmap.nfc.f.NfcFCommand;
-import jp.co.fmap.nfc.f.ReadWithoutEncryption;
+import jp.co.fmap.nfc.tag3.NfcFCommand;
+import jp.co.fmap.nfc.tag3.ReadWithoutEncryption;
 import jp.co.fmap.util.StringUtil;
 
 /**
