@@ -4,7 +4,7 @@
 
     <string name="title_section1">Polling</string>
     <string name="title_section2">ReadWithoutEncryption</string>
-    <string name="title_section3">Search Services</string>
+    <string name="title_section3">Search AID</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

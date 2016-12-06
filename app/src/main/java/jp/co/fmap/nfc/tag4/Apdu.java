@@ -13,6 +13,12 @@ import java.io.IOException;
 
 public abstract class Apdu {
 
+    public static class TLV {
+        public byte tag;
+        public byte length;
+        public byte[] value;
+    }
+
     public abstract class Request<T extends Response> {
         private static final String LOG_TAG = "fmap-apdu";
 
@@ -20,9 +26,9 @@ public abstract class Apdu {
         protected byte ins;
         protected byte p1;
         protected byte p2;
-        private byte lc;
         protected byte[] payload;
         protected byte le;
+        private byte lc;
 
         private byte[] makeCmd() {
             byte[] cmd = null;
@@ -43,7 +49,7 @@ public abstract class Apdu {
 
         abstract T parseResponse(byte[] rawData);
 
-        public T transeive(Tag tag) {
+        public T transceive(Tag tag) {
             T response = null;
             IsoDep isodep = IsoDep.get(tag);
             if (isodep != null) {
@@ -52,7 +58,7 @@ public abstract class Apdu {
                     byte[] responseData = isodep.transceive(makeCmd());
                     response = parseResponse(responseData);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(LOG_TAG, "transceive exception", e);
                 }
             }
             return response;
@@ -61,23 +67,20 @@ public abstract class Apdu {
     }
 
     public abstract class Response {
-        private byte[] rawData;
-
         protected byte[] data;
         protected byte sw1;
         protected byte sw2;
+        private byte[] rawData;
 
         protected Response(byte[] rawData) {
             this.rawData = rawData;
             this.parseResponse();
         }
 
-        abstract protected void parseResponse();
-    }
+        public byte[] getRawData() {
+            return rawData;
+        }
 
-    public static class TLV {
-        public byte tag;
-        public byte length;
-        public byte[] value;
+        abstract protected void parseResponse();
     }
 }

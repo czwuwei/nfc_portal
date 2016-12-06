@@ -82,14 +82,14 @@ public class FragmentReadWithoutEncryption extends MainActivity.PlaceholderFragm
     request.numberOfBlock = seekBarBlockCount.getProgress();
 
     if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_2bytes) {
-      request.blockIndexLengthType = NFCCmdReadWithNoSecurity.BLOCK_INDEX_LENGTH_2;
+      request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_2;
     } else if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_3bytes) {
-      request.blockIndexLengthType = NFCCmdReadWithNoSecurity.BLOCK_INDEX_LENGTH_3;
+      request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_3;
     }
     if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withoutCache) {
-      request.blockAccessMode = NFCCmdReadWithNoSecurity.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
+      request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
     } else if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withCache) {
-      request.blockAccessMode = NFCCmdReadWithNoSecurity.BLOCK_ACCESS_MODE_CACHE;
+      request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE;
     }
 
     request.idm = tag.getId();
