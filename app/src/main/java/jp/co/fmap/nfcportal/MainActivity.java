@@ -95,11 +95,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             Log.d(TAG, "id: " + hexString(tag.getId()));
             Log.d(TAG, "techList: " + mkString(tag.getTechList()));
-            nfcF = NfcF.get(tag);
-            Log.d(TAG, "manufacturer: " + hexString(nfcF.getManufacturer()));
-            Log.d(TAG, "systemCode: " + hexString(nfcF.getSystemCode()));
-            Log.d(TAG, "length: " + nfcF.getMaxTransceiveLength());
-            Log.d(TAG, "timeout: " + nfcF.getTimeout());
             Toast.makeText(this, "NFC enabled!", Toast.LENGTH_SHORT).show();
         }
     }

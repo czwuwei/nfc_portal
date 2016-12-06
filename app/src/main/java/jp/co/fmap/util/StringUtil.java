@@ -55,5 +55,10 @@ public class StringUtil {
     return new String(bytes, Charset.forName("UTF-8"));
   }
 
+  public static String prefix(String target, String prefix) {
+    String buf = prefix + target;
+    return buf.substring(buf.length() - prefix.length());
+  }
+
 
 }

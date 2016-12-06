@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.co.fmap.nfc.tag4.SelectFile;
+import jp.co.fmap.util.StringUtil;
 
 /**
  * Created by wuv1982 on 2016/12/06.
@@ -55,7 +56,7 @@ public class FragmentValueAddedService extends MainActivity.PlaceholderFragment 
                 SelectFile selectFileCmd = new SelectFile();
 
                 for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId ++) {
-                    String aid = GSMA_VAS_RID + Integer.toHexString(applicationId);
+                    String aid = GSMA_VAS_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
                     SelectFile.Request request = selectFileCmd.new Request(aid);
                     SelectFile.Response response = request.transceive(tag);
                     if (response != null && response.success()) {

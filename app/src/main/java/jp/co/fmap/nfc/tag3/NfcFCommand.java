@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import jp.co.fmap.util.StringUtil;
 
+import static jp.co.fmap.util.StringUtil.hexString;
+
 /**
  * Created by z00066 on 2016/11/04.
  */
@@ -39,6 +41,11 @@ public abstract class NfcFCommand {
     public T transceive(Tag tag) {
       T response = null;
       NfcF nfcf = NfcF.get(tag);
+      Log.d(LOG_TAG, "manufacturer: " + hexString(nfcf.getManufacturer()));
+      Log.d(LOG_TAG, "systemCode: " + hexString(nfcf.getSystemCode()));
+      Log.d(LOG_TAG, "length: " + nfcf.getMaxTransceiveLength());
+      Log.d(LOG_TAG, "timeout: " + nfcf.getTimeout());
+      
       try {
         nfcf.connect();
 
