@@ -16,14 +16,13 @@ public class Polling extends NfcFCommand {
     }
 
 
-    public class Request extends NfcFCommand.Request {
+    public class Request extends NfcFCommand.Request<Response> {
         public byte[] systemCodeMask;
         public byte requestCode;
         public byte timeSlot;
 
-
         @Override
-        NfcFCommand.Response parseResponse(byte[] rawData) {
+        Response parseResponse(byte[] rawData) {
             return new Response(rawData);
         }
 
@@ -50,10 +49,16 @@ public class Polling extends NfcFCommand {
 
         @Override
         protected void parseResponse() {
-            int cursor = 1;
-            idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
-            pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
-            requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
+            int cursor = 2;
+            if (rawData.length > cursor + 8 - 1) {
+                idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+            }
+            if (rawData.length > cursor + 8 - 1) {
+                pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+            }
+            if (rawData.length > cursor + 2 - 1) {
+                requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
+            }
         }
     }
 }

@@ -5,14 +5,12 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.NfcF;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import jp.co.fmap.nfc.model.NfcModel;
 import jp.co.fmap.nfc.tag3.NfcFCommand;
 
 import static jp.co.fmap.util.CollectionUtil.mkString;
@@ -44,6 +43,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     private Tag tag;
     private NfcF nfcF;
     private PlaceholderFragment fragment;
+
+    public static NfcModel sharedNfcModel = new NfcModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +115,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case 2:
                 fragment = new FragmentValueAddedService();
                 break;
+            case 3:
+                fragment = new FragmentSearch();
+                break;
             default:
                 fragment = new PlaceholderFragment();
         }
@@ -136,6 +140,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case 3:
                 mTitle = getString(R.string.title_section3);
                 break;
+            case 4:
+                mTitle = getString(R.string.title_section4);
+                break;
         }
         restoreActionBar();
     }
@@ -146,22 +153,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         actionBar.setTitle(mTitle);
     }
 
-    public void onBtnTransceive(View view) {
-        Log.d(MainActivity.TAG, "onBtnTransceive");
 
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-
-                NfcFCommand.Request req = fragment.genNfcCommand(tag);
-                if (tag != null) {
-                    NfcFCommand.Response response = req.transceive(tag);
-                    Log.d(MainActivity.TAG, response.toString());
-                }
-                return null;
-            }
-        }.execute();
-    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -180,7 +172,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
         }
 
         @Override
-        public void onAttach(Context activity) {
+        public void onAttach(Activity activity) {
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
         }

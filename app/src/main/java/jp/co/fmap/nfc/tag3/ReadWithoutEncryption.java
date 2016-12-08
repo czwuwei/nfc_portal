@@ -20,7 +20,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
         super((byte) 0x06, (byte) 0x07);
     }
 
-    public class Request extends NfcFCommand.Request {
+    public class Request extends NfcFCommand.Request<Response> {
 
         public byte[] idm;
         public byte[] serviceCodeList;
@@ -30,7 +30,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
         public int serviceOrderIndex = 0;
 
         @Override
-        NfcFCommand.Response parseResponse(byte[] rawData) {
+        Response parseResponse(byte[] rawData) {
             return new Response(rawData);
         }
 
@@ -69,7 +69,6 @@ public class ReadWithoutEncryption extends NfcFCommand {
     public class Response extends NfcFCommand.Response {
 
         public byte[] idm;
-        public byte responseCode;
         public byte status1 = (byte) 0xff;
         public byte status2 = (byte) 0xff;
         public int numberOfBlock;
@@ -81,8 +80,7 @@ public class ReadWithoutEncryption extends NfcFCommand {
 
         @Override
         protected void parseResponse() {
-            int cursor = 1;
-            responseCode = rawData[cursor += 1];
+            int cursor = 2;
             idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
             status1 = rawData[cursor += 1];
             status2 = rawData[cursor += 1];

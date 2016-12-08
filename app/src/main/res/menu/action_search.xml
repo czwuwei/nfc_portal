@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/action_system_code"
+        android:title="System Codes" />
+    <item android:title="Services"
+        android:id="@+id/action_search_services" />
+    <item android:title="AID"
+        android:id="@+id/action_search_aid" />
+</menu>

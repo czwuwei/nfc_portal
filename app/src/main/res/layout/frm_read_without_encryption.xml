@@ -16,6 +16,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="5dp"
+        android:text="idm"/>
+
+    <EditText
+        android:id="@+id/edtIdm"
+    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="seperated by ','"
+        android:text="0000000000000000"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
         android:text="Service codes"/>
 
     <EditText
@@ -124,7 +138,6 @@
         style="@android:style/Widget.Material.Button.Borderless"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onBtnTransceive"
         android:text="Transceive"/>
 
 </LinearLayout>

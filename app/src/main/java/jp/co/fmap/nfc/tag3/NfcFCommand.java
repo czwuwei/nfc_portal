@@ -35,6 +35,9 @@ public abstract class NfcFCommand {
     }
 
     abstract public class Request<T extends Response> {
+
+        public boolean keepConnection = true;
+
         abstract T parseResponse(byte[] rawData);
 
         abstract byte[] makeCmd();
@@ -48,8 +51,6 @@ public abstract class NfcFCommand {
             Log.d(LOG_TAG, "timeout: " + nfcf.getTimeout());
 
             try {
-                nfcf.connect();
-
                 byte[] uncompletedCmd = makeCmd();
 
                 // set command length
@@ -59,6 +60,12 @@ public abstract class NfcFCommand {
                 System.arraycopy(uncompletedCmd, 0, cmd, 1, length);
 
                 Log.i(LOG_TAG, "NFC-F send command: " + StringUtil.hexString(cmd));
+
+                if(!nfcf.isConnected()) {
+                    Log.d(LOG_TAG, "nfc connect");
+                    nfcf.connect();
+                }
+
                 byte[] responseData = nfcf.transceive(cmd);
 
                 if (responseData != null && responseData[1] == responseCode) {
@@ -68,8 +75,17 @@ public abstract class NfcFCommand {
                     Log.w(LOG_TAG, "illegal response : " + StringUtil.hexString(responseData));
                 }
 
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Log.e(LOG_TAG, "NFC-F connect failed", e);
+            } finally {
+                if (nfcf.isConnected() && !keepConnection) {
+                    Log.d(LOG_TAG, "nfc close");
+                    try {
+                        nfcf.close();
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "NFC-F close failed", e);
+                    }
+                }
             }
             return response;
         }
@@ -77,11 +93,12 @@ public abstract class NfcFCommand {
 
     abstract public class Response {
         protected int length;
+        protected byte responseCode;
         protected byte[] rawData;
-
 
         protected Response(byte[] rawData) {
             this.length = rawData[0];
+            this.responseCode = rawData[1];
             this.rawData = rawData;
             this.parseResponse();
         }
@@ -91,6 +108,14 @@ public abstract class NfcFCommand {
         @Override
         public String toString() {
             return "cmd [" + NfcFCommand.this.cmdCode + "] =\n\t\t" + StringUtil.hexString(this.rawData);
+        }
+
+        public int getLength() {
+            return length;
+        }
+
+        public byte getResponseCode() {
+            return responseCode;
         }
     }
 }
