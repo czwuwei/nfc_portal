@@ -21,79 +21,79 @@ import jp.co.fmap.util.StringUtil;
 
 public class FragmentReadWithoutEncryption extends MainActivity.PlaceholderFragment {
 
-  private EditText edtServiceCodeList;
-  private SeekBar seekBarBlockCount;
-  private SeekBar seekBarServiceCodeOrder;
-  private RadioGroup radioGroupBlockLength;
-  private RadioGroup radioGroupBlockAccessMode;
+    private EditText edtServiceCodeList;
+    private SeekBar seekBarBlockCount;
+    private SeekBar seekBarServiceCodeOrder;
+    private RadioGroup radioGroupBlockLength;
+    private RadioGroup radioGroupBlockAccessMode;
 
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    Log.d(MainActivity.TAG, "FragmentReadWithoutEncryption onCreateView");
-    View rootView = inflater.inflate(R.layout.frm_read_without_encryption, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(MainActivity.TAG, "FragmentReadWithoutEncryption onCreateView");
+        View rootView = inflater.inflate(R.layout.frm_read_without_encryption, container, false);
 
-    edtServiceCodeList = (EditText) rootView.findViewById(R.id.edtServiceCodes);
-    seekBarBlockCount = (SeekBar) rootView.findViewById(R.id.seekBar_blockCount);
-    seekBarBlockCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-      }
+        edtServiceCodeList = (EditText) rootView.findViewById(R.id.edtServiceCodes);
+        seekBarBlockCount = (SeekBar) rootView.findViewById(R.id.seekBar_blockCount);
+        seekBarBlockCount.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            }
 
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
-      }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-        Toast.makeText(getActivity(), "block count : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
-      }
-    });
-    seekBarServiceCodeOrder = (SeekBar) rootView.findViewById(R.id.seekBar_service_code_order);
-    seekBarServiceCodeOrder.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-      @Override
-      public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(getActivity(), "block count : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        seekBarServiceCodeOrder = (SeekBar) rootView.findViewById(R.id.seekBar_service_code_order);
+        seekBarServiceCodeOrder.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
-      }
+            }
 
-      @Override
-      public void onStartTrackingTouch(SeekBar seekBar) {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
 
-      }
+            }
 
-      @Override
-      public void onStopTrackingTouch(SeekBar seekBar) {
-        Toast.makeText(getActivity(), "system code index : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
-      }
-    });
-    radioGroupBlockLength = (RadioGroup) rootView.findViewById(R.id.radioGroup_block_length);
-    radioGroupBlockAccessMode = (RadioGroup) rootView.findViewById(R.id.radioGroup_block_access_mode);
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Toast.makeText(getActivity(), "system code index : " + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        radioGroupBlockLength = (RadioGroup) rootView.findViewById(R.id.radioGroup_block_length);
+        radioGroupBlockAccessMode = (RadioGroup) rootView.findViewById(R.id.radioGroup_block_access_mode);
 
-    return rootView;
-  }
-
-
-  @Override
-  protected NfcFCommand.Request genNfcCommand(Tag tag) {
-    ReadWithoutEncryption.Request request = new ReadWithoutEncryption().new Request();
-
-    request.serviceCodeList = StringUtil.parseToByte(edtServiceCodeList.getText().toString().replace(",", ""));
-    request.serviceOrderIndex = seekBarServiceCodeOrder.getProgress();
-    request.numberOfBlock = seekBarBlockCount.getProgress();
-
-    if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_2bytes) {
-      request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_2;
-    } else if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_3bytes) {
-      request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_3;
-    }
-    if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withoutCache) {
-      request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
-    } else if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withCache) {
-      request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE;
+        return rootView;
     }
 
-    request.idm = tag.getId();
 
-    return request;
-  }
+    @Override
+    protected NfcFCommand.Request genNfcCommand(Tag tag) {
+        ReadWithoutEncryption.Request request = new ReadWithoutEncryption().new Request();
+
+        request.serviceCodeList = StringUtil.parseToByte(edtServiceCodeList.getText().toString().replace(",", ""));
+        request.serviceOrderIndex = seekBarServiceCodeOrder.getProgress();
+        request.numberOfBlock = seekBarBlockCount.getProgress();
+
+        if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_2bytes) {
+            request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_2;
+        } else if (this.radioGroupBlockLength.getCheckedRadioButtonId() == R.id.radioButton_3bytes) {
+            request.blockIndexLengthType = ReadWithoutEncryption.BLOCK_INDEX_LENGTH_3;
+        }
+        if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withoutCache) {
+            request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE_EXCLUDE;
+        } else if (this.radioGroupBlockAccessMode.getCheckedRadioButtonId() == R.id.radioButton_withCache) {
+            request.blockAccessMode = ReadWithoutEncryption.BLOCK_ACCESS_MODE_CACHE;
+        }
+
+        request.idm = tag.getId();
+
+        return request;
+    }
 }

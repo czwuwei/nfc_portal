@@ -7,23 +7,24 @@ package jp.co.fmap.util;
 public class CollectionUtil {
 
 
-  public static String mkString(byte[] bytes) {
-    Byte[] byteObjs = new Byte[bytes.length];
-    for (int i = 0; i < bytes.length; i ++) {
-      byteObjs[i] = bytes[i];
+    public static String mkString(byte[] bytes) {
+        Byte[] byteObjs = new Byte[bytes.length];
+        for (int i = 0; i < bytes.length; i++) {
+            byteObjs[i] = bytes[i];
+        }
+        return mkString(byteObjs);
     }
-    return mkString(byteObjs);
-  }
 
-  public static <T> String mkString(T[] list) {
-    return mkString(list, ",");
-  }
-  public static <T> String mkString(T[] list, String delimit) {
-    StringBuilder buf = new StringBuilder();
-    for (T s : list) {
-      buf.append(s.toString()).append(delimit);
+    public static <T> String mkString(T[] list) {
+        return mkString(list, ",");
     }
-    buf.deleteCharAt(buf.length() - 1);
-    return buf.toString();
-  }
+
+    public static <T> String mkString(T[] list, String delimit) {
+        StringBuilder buf = new StringBuilder();
+        for (T s : list) {
+            buf.append(s.toString()).append(delimit);
+        }
+        buf.deleteCharAt(buf.length() - 1);
+        return buf.toString();
+    }
 }

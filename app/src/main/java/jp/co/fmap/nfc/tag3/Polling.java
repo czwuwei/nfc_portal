@@ -8,52 +8,52 @@ import java.util.Arrays;
 
 public class Polling extends NfcFCommand {
 
-  public static final String[] ENUM_REQUEST_CODE = { "00", "01", "02" };
-  public static final String[] ENUM_TIME_SLOT = { "00", "01", "03", "07", "0F" };
+    public static final String[] ENUM_REQUEST_CODE = {"00", "01", "02"};
+    public static final String[] ENUM_TIME_SLOT = {"00", "01", "03", "07", "0F"};
 
-  public Polling() {
-    super((byte) 0x00, (byte) 0x01);
-  }
-
-
-  public class Request extends NfcFCommand.Request {
-    public byte[] systemCodeMask;
-    public byte requestCode;
-    public byte timeSlot;
-
-
-    @Override
-    NfcFCommand.Response parseResponse(byte[] rawData) {
-      return new Response(rawData);
+    public Polling() {
+        super((byte) 0x00, (byte) 0x01);
     }
 
-    @Override
-    byte[] makeCmd() {
-      return new byte[]{
-            cmdCode,
-            systemCodeMask[0],
-            systemCodeMask[1],
-            requestCode,
-            timeSlot
-        };
-    }
-  }
 
-  public class Response extends NfcFCommand.Response {
-    public byte[] idm;
-    public byte[] pmm;
-    public byte[] requestedData;
+    public class Request extends NfcFCommand.Request {
+        public byte[] systemCodeMask;
+        public byte requestCode;
+        public byte timeSlot;
 
-    private Response(byte[] responseData) {
-      super(responseData);
+
+        @Override
+        NfcFCommand.Response parseResponse(byte[] rawData) {
+            return new Response(rawData);
+        }
+
+        @Override
+        byte[] makeCmd() {
+            return new byte[]{
+                    cmdCode,
+                    systemCodeMask[0],
+                    systemCodeMask[1],
+                    requestCode,
+                    timeSlot
+            };
+        }
     }
 
-    @Override
-    protected void parseResponse() {
-      int cursor = 1;
-      idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
-      pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
-      requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
+    public class Response extends NfcFCommand.Response {
+        public byte[] idm;
+        public byte[] pmm;
+        public byte[] requestedData;
+
+        private Response(byte[] responseData) {
+            super(responseData);
+        }
+
+        @Override
+        protected void parseResponse() {
+            int cursor = 1;
+            idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+            pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+            requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
+        }
     }
-  }
 }

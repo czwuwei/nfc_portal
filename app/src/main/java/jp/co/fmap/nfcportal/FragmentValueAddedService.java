@@ -33,7 +33,7 @@ public class FragmentValueAddedService extends MainActivity.PlaceholderFragment 
         View rootView = inflater.inflate(R.layout.frm_aid_list, container, false);
 
         aidListView = (ListView) rootView.findViewById(R.id.list_aid);
-        Button btnSearchAid = (Button)rootView.findViewById(R.id.btn_searchAid);
+        Button btnSearchAid = (Button) rootView.findViewById(R.id.btn_searchAid);
         btnSearchAid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,7 +47,7 @@ public class FragmentValueAddedService extends MainActivity.PlaceholderFragment 
 
         final String GSMA_VAS_RID = "A000000559";
 
-        new AsyncTask<Void, Void, List<String>>(){
+        new AsyncTask<Void, Void, List<String>>() {
             @Override
             protected List<String> doInBackground(Void[] objects) {
                 List<String> validAidList = new ArrayList<>();
@@ -55,7 +55,7 @@ public class FragmentValueAddedService extends MainActivity.PlaceholderFragment 
                 Tag tag = context.getNfcTag();
                 SelectFile selectFileCmd = new SelectFile();
 
-                for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId ++) {
+                for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId++) {
                     String aid = GSMA_VAS_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
                     SelectFile.Request request = selectFileCmd.new Request(aid);
                     SelectFile.Response response = request.transceive(tag);
