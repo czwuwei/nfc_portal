@@ -42,7 +42,16 @@ public abstract class NfcFCommand {
 
         abstract byte[] makeCmd();
 
+        protected boolean validation(){
+            return true;
+        }
+
         public T transceive(Tag tag) {
+            if (!validation()) {
+                Log.w(LOG_TAG, "transceive canceled for validation failed !!!");
+                return null;
+            }
+
             T response = null;
             NfcF nfcf = NfcF.get(tag);
             Log.d(LOG_TAG, "manufacturer: " + hexString(nfcf.getManufacturer()));
@@ -92,13 +101,16 @@ public abstract class NfcFCommand {
     }
 
     abstract public class Response {
+        public final int CURSOR_START = 1;
         protected int length;
         protected byte responseCode;
+
         protected byte[] rawData;
 
         protected Response(byte[] rawData) {
-            this.length = rawData[0];
-            this.responseCode = rawData[1];
+            int cursor = 0;
+            this.length = rawData[cursor += 0];
+            this.responseCode = rawData[cursor += 1];
             this.rawData = rawData;
             this.parseResponse();
         }

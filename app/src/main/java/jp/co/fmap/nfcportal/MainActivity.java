@@ -113,9 +113,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 fragment = new FragmentReadWithoutEncryption();
                 break;
             case 2:
-                fragment = new FragmentValueAddedService();
-                break;
-            case 3:
                 fragment = new FragmentSearch();
                 break;
             default:
@@ -139,9 +136,6 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 break;
             case 3:
                 mTitle = getString(R.string.title_section3);
-                break;
-            case 4:
-                mTitle = getString(R.string.title_section4);
                 break;
         }
         restoreActionBar();

@@ -80,14 +80,14 @@ public class ReadWithoutEncryption extends NfcFCommand {
 
         @Override
         protected void parseResponse() {
-            int cursor = 2;
-            idm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
-            status1 = rawData[cursor += 1];
+            int cursor = CURSOR_START;
+            idm = Arrays.copyOfRange(rawData, cursor += 1, cursor += 8);
+            status1 = rawData[cursor += 0];
             status2 = rawData[cursor += 1];
 
             if (status1 == 0x00) {
                 numberOfBlock = rawData[cursor += 1];
-                blockData = Arrays.copyOfRange(rawData, cursor, rawData.length - 1);
+                blockData = Arrays.copyOfRange(rawData, cursor, rawData.length);
             }
         }
 
