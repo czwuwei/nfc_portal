@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import jp.co.fmap.nfc.tag3.Polling;
+import jp.co.fmap.nfc.tag3.SearchServiceCode;
 import jp.co.fmap.nfc.tag4.SelectFile;
 import jp.co.fmap.util.StringUtil;
 
@@ -110,6 +111,7 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
             case R.id.action_search_services:
                 Log.d(MainActivity.TAG, "search services");
                 mode = ListMode.SERVICE;
+                searchServices();
                 break;
 
             case R.id.action_system_code:
@@ -123,6 +125,57 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
 
         }
         return true;
+    }
+
+    private void searchServices() {
+        new AsyncTask<Void, Void, List<String>>() {
+
+            @Override
+            protected List<String> doInBackground(Void... voids) {
+                List<String> validServiceList = new ArrayList<>();
+
+                MainActivity context = (MainActivity) getActivity();
+                Tag tag = context.getNfcTag();
+
+                SearchServiceCode cmd = new SearchServiceCode();
+                SearchServiceCode.Request request = cmd.new Request();
+                request.idm = StringUtil.parseToByte(MainActivity.sharedNfcModel.idm);
+                request.keepConnection = false;
+
+                for (int serviceIndex = 0x0000; serviceIndex < 0xFFFF; serviceIndex++) {
+                    request.serviceIndex = serviceIndex;
+
+                    Log.d(MainActivity.TAG, "search service index " + Integer.toHexString(serviceIndex));
+                    SearchServiceCode.Response response = request.transceive(tag);
+
+                    if (response != null) {
+                        if (response.areaInfo != null) {
+                            Log.d(MainActivity.TAG, "found area code " + StringUtil.hexString(response.areaInfo));
+                            validServiceList.add(StringUtil.hexString(response.areaInfo));
+                        } else if (response.serviceCode != null) {
+                            Log.d(MainActivity.TAG, "found service code " + StringUtil.hexString(response.serviceCode));
+                            if (response.serviceCode[0] == (byte)0xFF && response.serviceCode[1] == (byte) 0xFF) break;
+
+                            validServiceList.add(StringUtil.hexString(response.serviceCode));
+                        }
+                    }
+                }
+
+                return validServiceList;
+            }
+
+            @Override
+            protected void onPostExecute(List<String> validServiceList) {
+                if (validServiceList.size() > 0) {
+                    saveItemList(validServiceList);
+
+                    ListAdapter listAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, validServiceList);
+                    listViewSearch.setAdapter(listAdapter);
+                } else {
+                    Log.i(MainActivity.TAG, "not found service code");
+                }
+            }
+        }.execute();
     }
 
     private void searchSystemCodes() {

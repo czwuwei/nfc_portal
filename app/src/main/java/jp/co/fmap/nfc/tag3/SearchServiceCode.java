@@ -20,7 +20,7 @@ import java.util.Arrays;
  */
 
 public class SearchServiceCode extends NfcFCommand {
-    protected SearchServiceCode() {
+    public SearchServiceCode() {
         super((byte) 0x0A, (byte) 0x0B);
     }
 
@@ -51,11 +51,13 @@ public class SearchServiceCode extends NfcFCommand {
 
                 byteStream.write(cmdCode);
                 byteStream.write(idm);
-                byteStream.write((byte) (serviceIndex | 0xFF));
-                byteStream.write((byte) ((serviceIndex >> 8) | 0xFF));
+                byteStream.write((byte) (serviceIndex & 0xFF));
+                byteStream.write((byte) ((serviceIndex >> 8) & 0xFF));
+
+                cmd = byteStream.toByteArray();
 
             } catch (IOException e) {
-
+                Log.e(LOG_TAG, "byte stream exception", e);
             }
             return cmd;
         }
@@ -79,9 +81,20 @@ public class SearchServiceCode extends NfcFCommand {
             if (rawData.length - cursor == 4) {
                 // area definition
                 areaInfo = Arrays.copyOfRange(rawData, cursor, cursor += 4);
+
+                // little-endian
+                byte b = areaInfo[0];
+                areaInfo[0] = areaInfo[1];
+                areaInfo[1] = b;
+
             } else if (rawData.length - cursor == 2) {
                 // service code
                 serviceCode = Arrays.copyOfRange(rawData, cursor, cursor += 2);
+
+                // little-endian
+                byte b = serviceCode[0];
+                serviceCode[0] = serviceCode[1];
+                serviceCode[1] = b;
             }
         }
     }

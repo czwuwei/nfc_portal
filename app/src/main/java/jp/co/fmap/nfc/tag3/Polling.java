@@ -56,7 +56,7 @@ public class Polling extends NfcFCommand {
             if (rawData.length > cursor + 8) {
                 pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
             }
-            if (rawData.length > cursor + 2) {
+            if (rawData.length > cursor + 1) {
                 requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
             }
         }

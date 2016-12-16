@@ -65,6 +65,7 @@ public class FragmentPolling extends MainActivity.PlaceholderFragment implements
                 MainActivity context = (MainActivity) getActivity();
                 Tag tag = context.getNfcTag();
                 Polling.Request req = genNfcCommand(tag);
+                req.keepConnection = false;
                 if (tag != null) {
                     Polling.Response response = req.transceive(tag);
                     Log.d(MainActivity.TAG, response.toString());
