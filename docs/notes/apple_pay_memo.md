@@ -20,6 +20,9 @@ go -> select -> NFC -> charge
 * DPAN
 * MDES：MasterCard Digital Enablement Service
 * MST (co, Looppay)
+* PCI-SSC : Payment Card Industry Security Standard Council
+* TSP: Token Service Provider
+*
 
 
 ## roles
@@ -27,4 +30,12 @@ go -> select -> NFC -> charge
 * card issuer
 * card association
 * cardholder
+* acquirer
+* cashier
+* retail
+*
+
+# Industry in Japan
+* Rakuten SmartPay
+* Coiney
 *
