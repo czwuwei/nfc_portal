@@ -7,6 +7,8 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import jp.co.fmap.util.StringUtil;
+
 /**
  * Created by wuv1982 on 2016/12/05.
  */
@@ -20,8 +22,9 @@ public abstract class Apdu {
     }
 
     public abstract class Request<T extends Response> {
-        private static final String LOG_TAG = "fmap-apdu";
+        public boolean keepConnection = true;
 
+        private static final String LOG_TAG = "fmap-apdu";
         protected byte cla;
         protected byte ins;
         protected byte p1;
@@ -49,16 +52,33 @@ public abstract class Apdu {
 
         abstract T parseResponse(byte[] rawData);
 
-        public T transceive(Tag tag) {
+        public T transceive(Tag tag) throws Exception {
             T response = null;
             IsoDep isodep = IsoDep.get(tag);
             if (isodep != null) {
                 try {
-                    isodep.connect();
+                    if (!isodep.isConnected()) {
+                        isodep.connect();
+                    }
                     byte[] responseData = isodep.transceive(makeCmd());
-                    response = parseResponse(responseData);
+                    if (responseData != null) {
+                        Log.i(LOG_TAG, "NFC-F receive response: " + StringUtil.hexString(responseData));
+                        response = parseResponse(responseData);
+                    } else {
+                        Log.w(LOG_TAG, "illegal response : " + StringUtil.hexString(responseData));
+                    }
                 } catch (IOException e) {
                     Log.e(LOG_TAG, "transceive exception", e);
+                    throw e;
+                } finally {
+                    if (isodep.isConnected() && !keepConnection) {
+                        Log.d(LOG_TAG, "nfc close");
+                        try {
+                            isodep.close();
+                        } catch (IOException e) {
+                            Log.e(LOG_TAG, "isodep close failed", e);
+                        }
+                    }
                 }
             }
             return response;

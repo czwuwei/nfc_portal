@@ -230,7 +230,7 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
 
 
     private void searchAID() {
-
+        final String EMV_PPSE_RID = "A000000003";
         final String GSMA_VAS_RID = "A000000559";
 
         new AsyncTask<Void, Void, List<String>>() {
@@ -240,15 +240,27 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                 MainActivity context = (MainActivity) getActivity();
                 Tag tag = context.getNfcTag();
                 SelectFile selectFileCmd = new SelectFile();
-
-                for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId++) {
-                    String aid = GSMA_VAS_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
-                    SelectFile.Request request = selectFileCmd.new Request(aid);
-                    SelectFile.Response response = request.transceive(tag);
-                    if (response != null && response.success()) {
-                        Log.i(MainActivity.TAG, "valid AID: " + aid);
-                        validAidList.add(aid);
-                    }
+                if (tag != null) {
+//                    for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId++) {
+//                        String aid = EMV_PPSE_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
+//                        Log.d(MainActivity.TAG, "search AID: " + aid);
+                    String aid = "325041592E5359532E4444463031";
+                        SelectFile.Request request = selectFileCmd.new Request(aid);
+                        SelectFile.Response response = null;
+                        try {
+                            request.keepConnection = false;
+                            response = request.transceive(tag);
+                        } catch (Exception e) {
+                            Log.e(MainActivity.TAG, "abort search AID", e);
+//                            break;
+                        }
+                        if (response != null && response.success()) {
+                            Log.i(MainActivity.TAG, "valid AID: " + aid);
+                            validAidList.add(aid);
+                        }
+//                    }
+                } else {
+                    Log.w(MainActivity.TAG, "not found tag");
                 }
                 return validAidList;
             }

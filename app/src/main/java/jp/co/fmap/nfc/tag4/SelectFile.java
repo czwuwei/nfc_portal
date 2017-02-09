@@ -14,7 +14,7 @@ import jp.co.fmap.util.StringUtil;
 public class SelectFile extends Apdu {
 
     public class Request extends Apdu.Request<Response> {
-
+// //PPSE: 00A404000e325041592e5359532e444446303100
         public Request(String aid) {
             super();
             this.cla = 0x00;
