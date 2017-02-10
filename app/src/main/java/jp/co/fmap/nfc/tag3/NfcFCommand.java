@@ -101,16 +101,16 @@ public abstract class NfcFCommand {
     }
 
     abstract public class Response {
-        public final int CURSOR_START = 1;
+        public final int OFFSET_START = 1;
         protected int length;
         protected byte responseCode;
 
         protected byte[] rawData;
 
         protected Response(byte[] rawData) {
-            int cursor = 0;
-            this.length = rawData[cursor += 0];
-            this.responseCode = rawData[cursor += 1];
+            int offset = 0;
+            this.length = rawData[offset += 0];
+            this.responseCode = rawData[offset += 1];
             this.rawData = rawData;
             this.parseResponse();
         }

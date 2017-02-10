@@ -41,10 +41,6 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
     private Set<String> itemList;
     private ListMode mode;
 
-    private enum ListMode {
-        NONE, AID, SYSTEM, SERVICE
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frm_search, container, false);
@@ -61,7 +57,7 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                 listViewSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        TextView textView = (TextView)view;
+                        TextView textView = (TextView) view;
                         String text = textView.getText().toString();
                         Log.d(MainActivity.TAG, "on click " + text);
 
@@ -154,7 +150,8 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                             validServiceList.add(StringUtil.hexString(response.areaInfo));
                         } else if (response.serviceCode != null) {
                             Log.d(MainActivity.TAG, "found service code " + StringUtil.hexString(response.serviceCode));
-                            if (response.serviceCode[0] == (byte)0xFF && response.serviceCode[1] == (byte) 0xFF) break;
+                            if (response.serviceCode[0] == (byte) 0xFF && response.serviceCode[1] == (byte) 0xFF)
+                                break;
 
                             validServiceList.add(StringUtil.hexString(response.serviceCode));
                         }
@@ -190,11 +187,11 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                 Polling pollingCmd = new Polling();
 
                 List<String> maskList = new ArrayList<>();
-                for (int systemMask = 0xFF00; systemMask < 0xFFFF; systemMask+= 1) {
+                for (int systemMask = 0xFF00; systemMask < 0xFFFF; systemMask += 1) {
                     maskList.add(StringUtil.prefix(Integer.toHexString(systemMask), "0000"));
                 }
 
-                for (String systemMask: maskList) {
+                for (String systemMask : maskList) {
                     Polling.Request request = pollingCmd.new Request();
                     Log.d(MainActivity.TAG, "system code mask: " + systemMask);
                     request.systemCodeMask = StringUtil.parseToByte(systemMask);
@@ -228,7 +225,6 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
         }.execute();
     }
 
-
     private void searchAID() {
         final String EMV_PPSE_RID = "A000000003";
         final String GSMA_VAS_RID = "A000000559";
@@ -241,24 +237,24 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                 Tag tag = context.getNfcTag();
                 SelectFile selectFileCmd = new SelectFile();
                 if (tag != null) {
-//                    for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId++) {
-//                        String aid = EMV_PPSE_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
-//                        Log.d(MainActivity.TAG, "search AID: " + aid);
-                    String aid = "325041592E5359532E4444463031";
-                        SelectFile.Request request = selectFileCmd.new Request(aid);
-                        SelectFile.Response response = null;
-                        try {
+                    try {
+                        for (int applicationId = 0x0001; applicationId < 0xFFFF; applicationId++) {
+                            String aid = EMV_PPSE_RID + StringUtil.prefix(Integer.toHexString(applicationId), "0000");
+                            Log.d(MainActivity.TAG, "search AID: " + aid);
+                            SelectFile.Request request = selectFileCmd.new Request(aid);
+                            SelectFile.Response response = null;
+
                             request.keepConnection = false;
                             response = request.transceive(tag);
-                        } catch (Exception e) {
-                            Log.e(MainActivity.TAG, "abort search AID", e);
-//                            break;
+
+                            if (response != null && response.success()) {
+                                Log.i(MainActivity.TAG, "valid AID: " + aid);
+                                validAidList.add(aid);
+                            }
                         }
-                        if (response != null && response.success()) {
-                            Log.i(MainActivity.TAG, "valid AID: " + aid);
-                            validAidList.add(aid);
-                        }
-//                    }
+                    } catch (Exception e) {
+                        Log.e(MainActivity.TAG, "abort search AID", e);
+                    }
                 } else {
                     Log.w(MainActivity.TAG, "not found tag");
                 }
@@ -288,5 +284,9 @@ public class FragmentSearch extends MainActivity.PlaceholderFragment {
                 .putInt(PREF_FILED_LIST_MODE, mode.ordinal())
                 .apply();
 
+    }
+
+    private enum ListMode {
+        NONE, AID, SYSTEM, SERVICE
     }
 }

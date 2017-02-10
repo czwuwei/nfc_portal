@@ -13,8 +13,10 @@ import jp.co.fmap.util.StringUtil;
 
 public class SelectFile extends Apdu {
 
+    // PPSE: 00A404000e325041592e5359532e444446303100
+
     public class Request extends Apdu.Request<Response> {
-// //PPSE: 00A404000e325041592e5359532e444446303100
+
         public Request(String aid) {
             super();
             this.cla = 0x00;
@@ -49,11 +51,11 @@ public class SelectFile extends Apdu {
         protected void parseResponse() {
             byte[] rawData = getRawData();
             if (rawData != null) {
-                int reverseCursor = rawData.length;
+                int reverseOffset = rawData.length;
                 if (rawData.length > 1) {
-                    sw2 = rawData[reverseCursor -= 1];
-                    sw1 = rawData[reverseCursor -= 1];
-                    if (reverseCursor > 0) data = Arrays.copyOf(rawData, reverseCursor);
+                    sw2 = rawData[reverseOffset -= 1];
+                    sw1 = rawData[reverseOffset -= 1];
+                    if (reverseOffset > 0) data = Arrays.copyOf(rawData, reverseOffset);
                 }
             }
         }

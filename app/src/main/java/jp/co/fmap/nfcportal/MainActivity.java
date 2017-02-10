@@ -115,6 +115,9 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case 2:
                 fragment = new FragmentSearch();
                 break;
+            case 3:
+                fragment = new FragmentAndroidPay();
+                break;
             default:
                 fragment = new PlaceholderFragment();
         }
@@ -137,6 +140,8 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
             case 3:
                 mTitle = getString(R.string.title_section3);
                 break;
+            case 4:
+                mTitle = getString(R.string.title_section4);
         }
         restoreActionBar();
     }

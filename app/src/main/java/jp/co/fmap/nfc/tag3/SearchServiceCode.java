@@ -75,21 +75,21 @@ public class SearchServiceCode extends NfcFCommand {
 
         @Override
         protected void parseResponse() {
-            int cursor = CURSOR_START;
-            idm = Arrays.copyOfRange(rawData, cursor += 1, cursor += 8);
+            int offset = OFFSET_START;
+            idm = Arrays.copyOfRange(rawData, offset += 1, offset += 8);
 
-            if (rawData.length - cursor == 4) {
+            if (rawData.length - offset == 4) {
                 // area definition
-                areaInfo = Arrays.copyOfRange(rawData, cursor, cursor += 4);
+                areaInfo = Arrays.copyOfRange(rawData, offset, offset += 4);
 
                 // little-endian
                 byte b = areaInfo[0];
                 areaInfo[0] = areaInfo[1];
                 areaInfo[1] = b;
 
-            } else if (rawData.length - cursor == 2) {
+            } else if (rawData.length - offset == 2) {
                 // service code
-                serviceCode = Arrays.copyOfRange(rawData, cursor, cursor += 2);
+                serviceCode = Arrays.copyOfRange(rawData, offset, offset += 2);
 
                 // little-endian
                 byte b = serviceCode[0];

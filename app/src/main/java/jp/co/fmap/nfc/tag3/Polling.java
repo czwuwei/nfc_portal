@@ -49,15 +49,15 @@ public class Polling extends NfcFCommand {
 
         @Override
         protected void parseResponse() {
-            int cursor = CURSOR_START;
-            if (rawData.length > cursor + 8) {
-                idm = Arrays.copyOfRange(rawData, cursor += 1, cursor += 8);
+            int offset = OFFSET_START;
+            if (rawData.length > offset + 8) {
+                idm = Arrays.copyOfRange(rawData, offset += 1, offset += 8);
             }
-            if (rawData.length > cursor + 8) {
-                pmm = Arrays.copyOfRange(rawData, cursor, cursor += 8);
+            if (rawData.length > offset + 8) {
+                pmm = Arrays.copyOfRange(rawData, offset, offset += 8);
             }
-            if (rawData.length > cursor + 1) {
-                requestedData = Arrays.copyOfRange(rawData, cursor, rawData.length);
+            if (rawData.length > offset + 1) {
+                requestedData = Arrays.copyOfRange(rawData, offset, rawData.length);
             }
         }
     }
