@@ -22,7 +22,7 @@ public abstract class Apdu {
     }
 
     public abstract class Request<T extends Response> {
-        public boolean keepConnection = true;
+        public boolean keepConnection = false;
 
         private static final String LOG_TAG = "fmap-apdu";
         protected byte cla;
@@ -38,11 +38,15 @@ public abstract class Apdu {
             try {
                 ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-                this.lc = (byte) payload.length;
-                byteStream.write(new byte[]{cla, ins, p1, p2, lc});
-                byteStream.write(payload);
-                byteStream.write(le);
+                if (payload != null) {
+                    this.lc = (byte) payload.length;
+                    byteStream.write(new byte[]{cla, ins, p1, p2, lc});
+                    byteStream.write(payload);
+                } else {
+                    byteStream.write(new byte[]{cla, ins, p1, p2});
+                }
 
+                byteStream.write(le);
                 cmd = byteStream.toByteArray();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "byte stream exception", e);
@@ -60,9 +64,12 @@ public abstract class Apdu {
                     if (!isodep.isConnected()) {
                         isodep.connect();
                     }
-                    byte[] responseData = isodep.transceive(makeCmd());
+
+                    byte[] cmd = makeCmd();
+                    Log.i(LOG_TAG, "ISODEP send command: " + StringUtil.hexString(cmd));
+                    byte[] responseData = isodep.transceive(cmd);
                     if (responseData != null) {
-                        Log.i(LOG_TAG, "NFC-F receive response: " + StringUtil.hexString(responseData));
+                        Log.i(LOG_TAG, "ISODEP receive response: " + StringUtil.hexString(responseData));
                         response = parseResponse(responseData);
                     } else {
                         Log.w(LOG_TAG, "illegal response : " + StringUtil.hexString(responseData));

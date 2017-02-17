@@ -1,13 +1,18 @@
 package jp.co.fmap.nfcportal;
 
 import android.nfc.Tag;
+import android.nfc.tech.IsoDep;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 
+import jp.co.fmap.nfc.tag4.GetData;
+import jp.co.fmap.nfc.tag4.ReadBinary;
 import jp.co.fmap.nfc.tag4.SelectFile;
 
 /**
@@ -16,48 +21,81 @@ import jp.co.fmap.nfc.tag4.SelectFile;
 
 public class FragmentAndroidPay extends MainActivity.PlaceholderFragment implements View.OnClickListener {
 
-    Button btnSelectAID;
-    Button btnSelectPPSE;
+    private Button btnSelect;
+    private Button btnGetData;
+    private Button btnReadBinary;
+    private Button btnDisconnect;
+    private Spinner spAidList;
+
+    private String[] AID_LIST = new String[]{
+            "4F53452E5641532E3031",
+            "A000000476D0000101",
+            "A000000476D0000111",
+            "325041592E5359532E4444463031" // PPSE
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(MainActivity.TAG, "FragmentAndroidPay onCreateView");
         View rootView = inflater.inflate(R.layout.frm_android_pay, container, false);
 
-        btnSelectAID = (Button) rootView.findViewById(R.id.btnSelectAid);
-        btnSelectAID.setOnClickListener(this);
-        btnSelectPPSE = (Button) rootView.findViewById(R.id.btnSelectPPSE);
-        btnSelectPPSE.setOnClickListener(this);
+        btnSelect = (Button) rootView.findViewById(R.id.btnSelect);
+        btnSelect.setOnClickListener(this);
+
+        btnGetData = (Button) rootView.findViewById(R.id.btnGetData);
+        btnGetData.setOnClickListener(this);
+
+        btnDisconnect = (Button) rootView.findViewById(R.id.btnDisconnect);
+        btnDisconnect.setOnClickListener(this);
+
+        btnReadBinary = (Button) rootView.findViewById(R.id.btnReadBinary);
+        btnReadBinary.setOnClickListener(this);
+
+        spAidList = (Spinner) rootView.findViewById(R.id.spAidList);
+        ArrayAdapter<String> arrayAdapterRequestCode = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, AID_LIST);
+        arrayAdapterRequestCode.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spAidList.setAdapter(arrayAdapterRequestCode);
+        spAidList.setSelection(1);
 
         return rootView;
     }
 
     @Override
     public void onClick(View view) {
-
-        String aid = null;
-        switch (view.getId()) {
-            case R.id.btnSelectAid:
-//                <aid-filter android:name="4F53452E5641532E3031" />
-//                <aid-filter android:name="A000000476D0000101" />
-//                <aid-filter android:name="A000000476D0000111" />
-                aid = "4F53452E5641532E3031";
-                break;
-            case R.id.btnSelectPPSE:
-                aid = "325041592E5359532E4444463031";
-                break;
-            default:
-        }
-
-        MainActivity context = (MainActivity) getActivity();
-        Tag tag = context.getNfcTag();
-        SelectFile cmd = new SelectFile();
-        SelectFile.Request request = cmd.new Request(aid);
         try {
-            request.keepConnection = false;
-            request.transceive(tag);
+            MainActivity context = (MainActivity) getActivity();
+            Tag tag = context.getNfcTag();
+
+            switch (view.getId()) {
+                case R.id.btnSelect: {
+                    String aid = spAidList.getSelectedItem().toString();
+                    SelectFile cmd = new SelectFile();
+                    SelectFile.Request request = cmd.new Request(aid);
+                    request.keepConnection = false;
+                    request.transceive(tag);
+                    break;
+                }
+                case R.id.btnGetData: {
+                    GetData cmd = new GetData();
+                    GetData.Request request = cmd.new Request();
+                    request.transceive(tag);
+                    break;
+                }
+                case R.id.btnReadBinary: {
+                    ReadBinary cmd = new ReadBinary();
+                    ReadBinary.Request request = cmd.new Request();
+                    request.transceive(tag);
+                    break;
+                }
+                case R.id.btnDisconnect: {
+                    IsoDep.get(tag).close();
+                }
+                default:
+            }
         } catch (Exception e) {
-            Log.e(MainActivity.TAG, "failed to select AID " + aid, e);
+            Log.e(MainActivity.TAG, "failed to transceive");
         }
+
     }
 }

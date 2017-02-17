@@ -5,17 +5,37 @@
     android:layout_height="match_parent"
     tools:context="jp.co.fmap.nfcportal.FragmentAndroidPay">
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spAidList" />
+
     <Button
         android:text="Select AID"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSelectAid"
+        android:id="@+id/btnSelect"
         style="@android:style/Widget.Material.Button.Borderless" />
 
     <Button
-        android:text="Select PPSE"
+        android:text="Get Data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.Material.Button.Borderless"
-        android:id="@+id/btnSelectPPSE" />
+        android:id="@+id/btnGetData"
+        style="@android:style/Widget.Material.Button.Borderless" />
+
+    <Button
+        android:text="Read Binary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnReadBinary"
+        style="@android:style/Widget.Material.Button.Borderless" />
+
+    <Button
+        android:text="Disconnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnDisconnect"
+        style="@android:style/Widget.Material.Button.Borderless" />
+
 </LinearLayout>
