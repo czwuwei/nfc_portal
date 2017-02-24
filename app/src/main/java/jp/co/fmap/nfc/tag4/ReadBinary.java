@@ -12,7 +12,7 @@ public class ReadBinary extends Apdu {
         public Request() {
             super();
             this.cla = 0x00;
-            this.ins = (byte)0xB0;
+            this.ins = (byte) 0xB0;
             this.p1 = (byte) 0x80;
             this.p2 = 0x00;
         }

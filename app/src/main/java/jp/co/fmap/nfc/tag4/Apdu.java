@@ -7,6 +7,7 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import jp.co.fmap.nfcportal.MainActivity;
 import jp.co.fmap.util.StringUtil;
 
 /**
@@ -16,9 +17,20 @@ import jp.co.fmap.util.StringUtil;
 public abstract class Apdu {
 
     public static class TLV {
-        public byte tag;
-        public byte length;
+        public byte[] tag;
+        private int length;
         public byte[] value;
+
+        public byte[] toBytes() throws IOException {
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            byteStream.write(tag);
+             if (value != null) {
+                 length = value.length;
+                 byteStream.write(length);
+                 byteStream.write(value);
+             }
+            return byteStream.toByteArray();
+        }
     }
 
     public abstract class Request<T extends Response> {
@@ -27,11 +39,11 @@ public abstract class Apdu {
         private static final String LOG_TAG = "fmap-apdu";
         protected byte cla;
         protected byte ins;
-        protected byte p1;
-        protected byte p2;
-        protected byte[] payload;
-        protected byte le;
-        private byte lc;
+        public byte p1;
+        public byte p2;
+        public byte[] payload;
+        public Byte le;
+        private Byte lc;
 
         private byte[] makeCmd() {
             byte[] cmd = null;
@@ -45,8 +57,9 @@ public abstract class Apdu {
                 } else {
                     byteStream.write(new byte[]{cla, ins, p1, p2});
                 }
-
-                byteStream.write(le);
+                if (le != null) {
+                    byteStream.write(le);
+                }
                 cmd = byteStream.toByteArray();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "byte stream exception", e);
@@ -64,6 +77,7 @@ public abstract class Apdu {
                     if (!isodep.isConnected()) {
                         isodep.connect();
                     }
+                    isodep.setTimeout(5000);
 
                     byte[] cmd = makeCmd();
                     Log.i(LOG_TAG, "ISODEP send command: " + StringUtil.hexString(cmd));
@@ -79,7 +93,7 @@ public abstract class Apdu {
                     throw e;
                 } finally {
                     if (isodep.isConnected() && !keepConnection) {
-                        Log.d(LOG_TAG, "nfc close");
+                        Log.d(LOG_TAG, "isodep close");
                         try {
                             isodep.close();
                         } catch (IOException e) {
@@ -102,6 +116,15 @@ public abstract class Apdu {
         protected Response(byte[] rawData) {
             this.rawData = rawData;
             this.parseResponse();
+        }
+
+        public boolean success() {
+            if (sw1 == (byte) 0x90 && sw2 == 0x00) {
+                return true;
+            } else {
+                Log.d(MainActivity.TAG, "Response status failed " + StringUtil.hexString(new byte[]{sw1, sw2}));
+            }
+            return false;
         }
 
         public byte[] getRawData() {

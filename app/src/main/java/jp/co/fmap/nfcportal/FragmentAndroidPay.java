@@ -1,5 +1,8 @@
 package jp.co.fmap.nfcportal;
 
+import android.content.Context;
+import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.IsoDep;
 import android.os.Bundle;
@@ -11,9 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import jp.co.fmap.nfc.tag4.Apdu;
 import jp.co.fmap.nfc.tag4.GetData;
+import jp.co.fmap.nfc.tag4.RawCommand;
 import jp.co.fmap.nfc.tag4.ReadBinary;
 import jp.co.fmap.nfc.tag4.SelectFile;
+import jp.co.fmap.util.ByteUtil;
+import jp.co.fmap.util.CollectionUtil;
+
+import static jp.co.fmap.util.CollectionUtil.mkString;
+import static jp.co.fmap.util.StringUtil.hexString;
 
 /**
  * Created by z00066 on 2017/02/10.
@@ -33,6 +43,9 @@ public class FragmentAndroidPay extends MainActivity.PlaceholderFragment impleme
             "A000000476D0000111",
             "325041592E5359532E4444463031" // PPSE
     };
+    private Tag tag;
+
+    private final String TAG = getClass().getSimpleName();
 
 
     @Override
@@ -62,10 +75,60 @@ public class FragmentAndroidPay extends MainActivity.PlaceholderFragment impleme
     }
 
     @Override
+    public void onNfcIntent(Context context, Intent intent) {
+        Log.d(TAG, "Android Pay mode");
+        tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+        Log.d(TAG, "id: " + hexString(tag.getId()));
+        Log.d(TAG, "techList: " + mkString(tag.getTechList()));
+
+        try {
+            {
+                SelectFile cmd = new SelectFile();
+                SelectFile.Request request = cmd.new Request(AID_LIST[1]);
+                SelectFile.Response response = request.transceive(tag);
+                 if (!response.success()) return;
+            }
+            {
+                RawCommand cmd = new RawCommand();
+
+                Apdu.TLV merchantId = new Apdu.TLV();
+                merchantId.tag = new byte[]{(byte)0xdf, (byte)0x31};
+                merchantId.value = ByteUtil.longToBytes(3187565030047023378L);
+
+                Apdu.TLV storeId = new Apdu.TLV();
+                storeId.tag = new byte[]{(byte)0xdf, (byte)0x32};
+                storeId.value = "cyberz".getBytes("ASCII");
+
+                RawCommand.Request request = cmd.new Request("90500000");
+                request.payload = CollectionUtil.concatByteArray(merchantId.toBytes(), storeId.toBytes());
+                RawCommand.Response response = request.transceive(tag);
+            }
+
+//            {
+//                SelectFile cmd = new SelectFile();
+//                SelectFile.Request request = cmd.new Request("0001");
+//                request.p1 = 0x02;
+//                SelectFile.Response response = request.transceive(tag);
+//                if (!response.success()) return;
+//            }
+//            {
+//                ReadBinary cmd = new ReadBinary();
+//                ReadBinary.Request request = cmd.new Request();
+//                ReadBinary.Response response =request.transceive(tag);
+//                if (!response.success()) return;
+//            }
+        } catch (Exception e) {
+            Log.e(getClass().getSimpleName(), "NFC transceive failed", e);
+        } finally {
+            Log.d(getClass().getSimpleName(), "NFC transceive over");
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         try {
-            MainActivity context = (MainActivity) getActivity();
-            Tag tag = context.getNfcTag();
+//            MainActivity context = (MainActivity) getActivity();
+//            Tag tag = context.getNfcTag();
 
             switch (view.getId()) {
                 case R.id.btnSelect: {

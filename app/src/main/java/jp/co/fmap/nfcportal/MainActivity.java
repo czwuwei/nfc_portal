@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
@@ -20,10 +21,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import jp.co.fmap.nfc.common.NfcProxy;
 import jp.co.fmap.nfc.model.NfcModel;
 import jp.co.fmap.nfc.tag3.NfcFCommand;
 
-import static jp.co.fmap.util.CollectionUtil.mkString;
 import static jp.co.fmap.util.StringUtil.hexString;
 import static jp.co.fmap.util.StringUtil.utfString;
 
@@ -93,10 +94,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
                 }
             }
         } else if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())) {
-            tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            Log.d(TAG, "id: " + hexString(tag.getId()));
-            Log.d(TAG, "techList: " + mkString(tag.getTechList()));
             Toast.makeText(this, "NFC enabled!", Toast.LENGTH_SHORT).show();
+
+            if (fragment != null) {
+                fragment.onNfcIntent(this, intent);
+            }
         }
     }
 
@@ -157,7 +159,7 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class PlaceholderFragment extends Fragment implements NfcProxy{
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -178,6 +180,11 @@ public class MainActivity extends Activity implements NavigationDrawerFragment.N
 
         protected NfcFCommand.Request genNfcCommand(Tag tag) {
             return null;
+        }
+
+        @Override
+        public void onNfcIntent(Context context, Intent intent) {
+            Log.d(TAG, "default NFC proxy");
         }
     }
 
